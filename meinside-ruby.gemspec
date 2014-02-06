@@ -15,21 +15,21 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
 
   # dependencies
-  s.add_dependency('aws-sdk', '~> 0')
-  s.add_dependency('coderay', '~> 0')
-  s.add_dependency('dropbox-sdk', '~> 0')
-  s.add_dependency('highline', '~> 0')
-  s.add_dependency('json', '~> 0')
-  s.add_dependency('mime', '~> 0')
-  s.add_dependency('mimemagic', '~> 0')
-  s.add_dependency('mysql', '~> 0')
-  s.add_dependency('net-scp', '~> 0')
-  s.add_dependency('net-sftp', '~> 0')
-  s.add_dependency('net-ssh', '~> 0')
-  s.add_dependency('ruby-gmail', '~> 0')
-  s.add_dependency('ruby-hmac', '~> 0')
-  s.add_dependency('sqlite3', '~> 0')
-  s.add_dependency('thor', '~> 0')
+  s.add_dependency('aws-sdk', '~> 1.0')
+  s.add_dependency('coderay', '~> 1.0')
+  s.add_dependency('dropbox-sdk', '~> 1.0')
+  s.add_dependency('highline', '~> 1.0')
+  s.add_dependency('json', '~> 1.0')
+  s.add_dependency('mime', '~> 0.0')
+  s.add_dependency('mimemagic', '~> 0.0')
+  s.add_dependency('mysql', '~> 2.0')
+  s.add_dependency('net-scp', '~> 1.0')
+  s.add_dependency('net-sftp', '~> 2.0')
+  s.add_dependency('net-ssh', '~> 2.0')
+  s.add_dependency('ruby-gmail', '~> 0.0')
+  s.add_dependency('ruby-hmac', '~> 0.0')
+  s.add_dependency('sqlite3', '~> 1.0')
+  s.add_dependency('thor', '~> 0.0')
 
   # profile
   s.authors     = ['Sungjin Han']

@@ -1,0 +1,19 @@
+# last update: 2014.02.06.
+
+*.gem
+*.rbc
+.bundle
+.config
+coverage
+lib/bundler/man
+pkg
+rdoc
+spec/reports
+
+# temporary files/dirs
+tmp
+*.swp
+
+# osx files
+.DS_Store
+

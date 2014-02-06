@@ -1,0 +1,227 @@
+#!/usr/bin/env ruby
+# coding: UTF-8
+
+# template_rb
+#
+# generates ruby code templates
+# 
+# created on : 2007.10.31
+# last update: 2014.02.06
+# 
+# by meinside@gmail.com
+
+require "thor"
+
+require "my_util"
+
+module MeInside
+  AUTHOR_NAME = "meinside@gmail.com"
+  SCRIPT_MOD = 0700
+
+  TEMPLATE_TEST_UNIT = <<TEMPLATE_TEST_UNIT
+$: << File.join(__dir__, '..', SOMEWHERE)
+
+require 'test/unit'
+
+class TestSomething < Test::Unit::TestCase
+
+  def setup
+    # TODO - run before each test
+  end
+
+  # TODO - add more test cases here
+  def test_something
+    # assert_not_nil @test_something
+  end
+
+  def teardown
+    # TODO - run after each test
+  end
+
+end
+
+TEMPLATE_TEST_UNIT
+
+  TEMPLATE_RSPEC = <<TEMPLATE_RSPEC
+$: << File.join(__dir__, '..', SOMEWHERE)
+
+require 'some_class'
+
+describe SomeClass do
+
+  before :all do
+    # TODO - run before all tests
+  end
+
+  before :each do
+    # TODO - run before each test
+  end
+
+  # TODO - add more tests here
+  it "should test something" do
+    # @test_something.count.should == 7
+  end
+
+  after :each do
+    # TODO - run after each test
+  end
+
+  after :all do
+    # TODO - run after all tests
+  end
+
+end
+
+TEMPLATE_RSPEC
+
+  TEMPLATE_SCRIPT = <<TEMPLATE_SCRIPT
+$: << File.join(__dir__, '..', SOMEWHERE)
+
+# TODO - do something
+
+TEMPLATE_SCRIPT
+
+  class TemplateRuby < Thor
+    include MyUtil
+
+    def method_missing(method, *args)
+      gen method.to_s
+    end
+
+    default_task :gen
+
+    desc "gen [FILENAME(.EXTENSION)]", "create a ruby file template with given filename"
+    long_desc <<RUN_DESC
+$ template_rb some_script.rb
+
+or
+
+$ template_rb some_script
+
+or even
+
+$ template_rb
+RUN_DESC
+    method_option :test, type: :boolean, aliases: '-t', desc: 'generates test unit template'
+    method_option :rspec, type: :boolean, aliases: '-r', desc: 'generates rspec template'
+    def gen(filename = nil)
+      if options.test?
+        filename ||= prompt("> Test script file name: ")
+        type = :test
+      elsif options.rspec?
+        filename ||= prompt("> Rspec file name: ")
+        type = :rspec
+      else
+        filename ||= (prompt("> Script file name: ") || "")
+
+        if filename.empty?
+          puts "* no file name was given"
+          exit(1)
+        end
+
+        type = :script
+      end
+
+      basename = File.basename(filename, ".*")
+      description = prompt("> Description of the script: ")
+
+      buildup_template_file(basename, buildup_template_header(basename, description: description, type: type), type: type)
+    end
+
+    private
+    def get_encoding
+      encoding = ENV["LANG"] || ENV["LC_ALL"] || "ascii"
+      return encoding.split(".")[-1]
+    end
+
+    def filename_for(basename, type)
+      case type
+      when :script
+        return "#{basename}.rb"
+      when :test
+        return basename =~ /^test_/ ? "#{basename}.rb" : "test_#{basename}.rb"
+      when :rspec
+        return basename =~ /_spec$/ ? "#{basename}.rb" : "#{basename}_spec.rb"
+      end
+    end
+
+    # tears down given string not to exceed specified length
+    def teardown_to_oneline(line, length = 60)
+      lines = []
+      line.split(" ").each {|line|
+        if !lines.empty? && lines[-1].size + line.size + 1 <= length
+          lines[-1].concat(" " + line)
+        else
+          lines << line
+        end
+      }
+      return lines
+    end
+
+    # comments out given string or string array and returns as a string array
+    def get_commented_lines(str)
+      if str.respond_to? "gsub!"
+        str.gsub(/^(.+)$/) {|s| "# " + s}
+      elsif str.respond_to? "map"
+        str.map {|line| "# " + line}
+      end
+    end
+
+    # comments out given string or string array and returns as a multi-lined string
+    def get_commented_text(str)
+      get_commented_lines(str).join("\n")
+    end
+
+    # builds up a template header with given informatations
+    def buildup_template_header(basename, hash)
+      header = []
+      type = hash[:type] || :script
+      header << filename_for(basename, type)
+      header << ""
+      description = hash[:description] || "no description"
+      header << teardown_to_oneline(description)
+      header << ""
+      date = hash[:date] || Time.now
+      header << "created on : %04d.%02d.%02d" % [date.year, date.month, date.day]
+      header << "last update: %04d.%02d.%02d" % [date.year, date.month, date.day]
+      header << ""
+      author = hash[:author] || AUTHOR_NAME
+      header << teardown_to_oneline("by " + author)
+      return header.flatten
+    end
+
+    # builds up a template file with given informations
+    def buildup_template_file(basename, header, hash)
+      type = hash[:type] || :script
+      filename = filename_for(basename, type)
+
+      if File.exist? filename
+        exit(0) unless prompt("* '#{filename}' already exists, overwrite it? (y/n): ") =~ /^y$/i
+      end
+      File.open(filename, "w") {|file|
+        file << "#!/usr/bin/env ruby"
+        file << "\n"
+        file << "# coding: #{get_encoding}"
+        file << "\n" * 2
+        file << get_commented_text(header)
+        file << "\n" * 2
+
+        case type
+        when :script
+          file << TEMPLATE_SCRIPT
+        when :test
+          file << TEMPLATE_TEST_UNIT
+        when :rspec
+          file << TEMPLATE_RSPEC
+        end
+
+        file.chmod SCRIPT_MOD
+
+        puts "* Successfully generated: #{filename}"
+      }
+    end
+  end
+end
+
+MeInside::TemplateRuby.start(ARGV)
+

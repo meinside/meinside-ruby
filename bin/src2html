@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+# coding: UTF-8
+
+# src2html
+# 
+# colorizes given source codes to html files
+# 
+# created on : 2009.10.09
+# last update: 2014.02.06
+# 
+# by meinside@gmail.com
+
+require "thor"
+
+require "coderay"
+
+module MeInside
+  class Src2Html < Thor
+    def method_missing(method, *args)
+      conv method.to_s, *args
+    end
+
+    default_task :conv
+
+    desc 'conv LANGUAGE IN_FILEPATH [OUT_FILEPATH]', 'convert given source file to a html file'
+    long_desc <<CONV_DESC
+$ src2html ruby /some/where/src.rb
+
+or
+
+$ src2html ruby /some/where/src.rb /to/where/output.html
+CONV_DESC
+    def conv(lang, in_filepath = nil, out_filepath = nil)
+      if in_filepath.nil?
+        puts "* no filepath given"
+        exit 1
+      elsif ! File.exists? in_filepath
+        puts "* #{in_filepath} does not exist"
+        exit 1
+      end
+
+      converted = ''
+      File.open(in_filepath, 'r') {|file|
+        converted = CodeRay.scan(file.read, lang.to_sym).page
+      }
+      
+      unless out_filepath.nil?
+        File.open(out_filepath, 'w') {|file|
+          file.write(converted)
+        }
+        puts "* converted to: #{out_filepath}"
+      else
+        puts converted
+      end
+    end
+  end
+end
+
+trap("SIGINT") { puts; exit 1 }
+MeInside::Src2Html.start(ARGV)
+

@@ -10,12 +10,12 @@
 # 
 # by meinside@gmail.com
 
-require "thor"
+require 'thor'
 
-require "my_util"
+require 'my_util'
 
 module MeInside
-  AUTHOR_NAME = "meinside@gmail.com"
+  AUTHOR_NAME = 'meinside@gmail.com'
   SCRIPT_MOD = 0700
 
   TEMPLATE_TEST_UNIT = <<TEMPLATE_TEST_UNIT
@@ -91,7 +91,7 @@ TEMPLATE_SCRIPT
     default_task :gen
 
     desc "gen [FILENAME(.EXTENSION)]", "create a ruby file template with given filename"
-    long_desc <<RUN_DESC
+    long_desc <<GEN_DESC
 $ template_rb some_script.rb
 
 or
@@ -101,7 +101,7 @@ $ template_rb some_script
 or even
 
 $ template_rb
-RUN_DESC
+GEN_DESC
     method_option :test, type: :boolean, aliases: '-t', desc: 'generates test unit template'
     method_option :rspec, type: :boolean, aliases: '-r', desc: 'generates rspec template'
     def gen(filename = nil)
@@ -116,7 +116,7 @@ RUN_DESC
 
         if filename.empty?
           puts "* no file name was given"
-          exit(1)
+          exit 1
         end
 
         type = :script
@@ -196,7 +196,7 @@ RUN_DESC
       filename = filename_for(basename, type)
 
       if File.exist? filename
-        exit(0) unless prompt("* '#{filename}' already exists, overwrite it? (y/n): ") =~ /^y$/i
+        exit 0 unless prompt("* '#{filename}' already exists, overwrite it? (y/n): ") =~ /^y$/i
       end
       File.open(filename, "w") {|file|
         file << "#!/usr/bin/env ruby"
@@ -223,5 +223,6 @@ RUN_DESC
   end
 end
 
+trap("SIGINT") { puts; exit 1 }
 MeInside::TemplateRuby.start(ARGV)
 

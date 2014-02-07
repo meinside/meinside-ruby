@@ -1,4 +1,4 @@
-# last update: 2014.02.06.
+# last update: 2014.02.07.
 
 Gem::Specification.new do |s|
   # version/date
@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.add_dependency('aws-sdk', '~> 1.0')
   s.add_dependency('coderay', '~> 1.0')
   s.add_dependency('dropbox-sdk', '~> 1.0')
-  s.add_dependency('highline', '~> 1.0')
+  s.add_dependency('i2c', '~> 0.0')
   s.add_dependency('json', '~> 1.0')
   s.add_dependency('mime', '~> 0.0')
   s.add_dependency('mimemagic', '~> 0.0')
@@ -28,8 +28,11 @@ Gem::Specification.new do |s|
   s.add_dependency('net-ssh', '~> 2.0')
   s.add_dependency('ruby-gmail', '~> 0.0')
   s.add_dependency('ruby-hmac', '~> 0.0')
+  s.add_dependency('spreadsheet', '~> 0.0')
   s.add_dependency('sqlite3', '~> 1.0')
   s.add_dependency('thor', '~> 0.0')
+  s.add_dependency('wiringpi', '~> 1.0')
+  s.add_dependency('write_xlsx', '~> 0.0')
 
   # profile
   s.authors     = ['Sungjin Han']

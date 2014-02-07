@@ -1,0 +1,132 @@
+#!/usr/bin/env ruby
+# coding: UTF-8
+
+# bin/send_gmail
+# 
+# send email through gmail
+# 
+# created on : 2012.06.19
+# last update: 2014.02.07
+# 
+# by meinside@gmail.com
+
+require 'thor'
+require 'yaml'
+
+require 'my_util'
+require 'my_gmail'
+
+module MeInside
+
+  class SendGmail < Thor
+    include MyUtil
+
+    default_task :send
+
+    desc "send", "send a mail through gmail with supplied parameters"
+    long_desc <<SEND_DESC
+$ send_gmail -c ~/configs/gmail.config
+
+or
+
+$ send_gmail -u you@gmail.com -p password -r recipient@somewhere.com
+
+or even
+
+$ send_gmail
+SEND_DESC
+    method_option :config, type: :string, aliases: '-c', desc: 'config file path'
+    method_option :username, type: :string, aliases: '-u', desc: 'gmail username'
+    method_option :passwd, type: :string, aliases: '-p', desc: 'gmail password'
+    method_option :recipient, type: :string, aliases: '-r', desc: 'recipient email address'
+    method_option :title, type: :string, aliases: '-t', desc: 'email title'
+    method_option :text, type: :string, aliases: '-x', desc: 'email text content'
+    method_option :html, type: :string, aliases: '-m', desc: 'email html content'
+    method_option :file, type: :string, aliases: '-f', desc: 'attachment filepath'
+    def send(*args)
+      username, passwd, recipient, title, text, html, file = nil, nil, nil, nil, nil, nil, nil
+
+      # get from config file
+      if options.config
+        if configs = read_configs(options.config)
+          username = configs["sender"]["username"]
+          passwd = configs["sender"]["passwd"]
+          recipient = configs["recipient"]["email"]
+        end
+      end
+
+      # get from parameters/prompt
+      username = options['username'] || prompt("> your gmail username: ") unless username
+      passwd = options['passwd'] || prompt("> your gmail passwd: ", true) unless passwd
+      recipient = options['recipient'] || prompt("> recipient's email address: ") unless recipient
+      title = options['title'] || prompt("> title: ") unless title
+      html = options['html'] if options['html']
+      text = options['text'] || prompt("> email text: ") if text.nil? && html.nil?
+      file = options['file'] if options['file']
+
+      # fill params
+      params = {
+        username: username, 
+        passwd: passwd, 
+        recipient: recipient, 
+        title: title, 
+      }
+      params[:text_content] = text if text
+      params[:html_content] = html if html
+      file = File.expand_path(file)
+      params[:filepath] = file if file && File.exists?(file)
+
+      # send gmail
+      MyGmail.send(params)
+    end
+
+    desc "genconfig", "generate a sample config file"
+    long_desc <<GENCONFIG_DESC
+$ send_gmail genconfig
+
+or
+
+$ send_gmail genconfig ./send_gmail.config
+GENCONFIG_DESC
+    def genconfig(filepath = nil)
+      filepath ||= "gmail_sample.yml"
+      File.open(filepath, 'w') {|file|
+        file << <<CONFIG_SAMPLE
+# config file(.yml) sample for `send_gmail`
+
+---
+sender:
+  username: _gmail_username_
+  passwd: _gmail_passwd_
+
+recipient:
+  email: _recipient_email_address_
+
+CONFIG_SAMPLE
+      }
+
+      puts "* generated: #{filepath}"
+    end
+
+    private
+    def read_configs(filepath)
+      filepath = File.expand_path(filepath)
+      if File.exists? filepath
+        File.open(filepath, "r"){|file|
+          begin
+            return YAML.load(file)
+          rescue
+            puts "* error parsing config file: #{filepath}"
+          end
+        }
+      else
+        puts "* config file not found: #{filepath}"
+      end
+      return nil
+    end
+  end
+end
+
+trap('SIGINT') { puts; exit 1 }
+MeInside::SendGmail.start(ARGV)
+

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # coding: UTF-8
 
-# template_rb
+# bin/template_rb
 #
 # generates ruby code templates
 # 
@@ -223,6 +223,6 @@ GEN_DESC
   end
 end
 
-trap("SIGINT") { puts; exit 1 }
+trap('SIGINT') { puts; exit 1 }
 MeInside::TemplateRuby.start(ARGV)
 

@@ -5,14 +5,12 @@
 # my utility functions
 # 
 # created on : 2008.11.19
-# last update: 2013.08.12
+# last update: 2014.02.07
 # 
 # by meinside@gmail.com
 
-require "highline/import"
-require "find"
-require "fileutils"
-require "base64"
+require 'io/console'
+require 'digest/md5'
 
 # monkey-patch for Object class
 class Object
@@ -25,15 +23,19 @@ end
 # my utility module
 module MyUtil
 
-  # get user's input from STDIN with/without masking
+  # get user's input from STDIN with or without masking
   # @param msg [String] prompt message
-  # @param masking_char [String, nil] masking character for password input (nil for non-masking)
-  def prompt(msg, masking_char = nil)
-    if masking_char.nil?
-      ask(msg)
+  # @param mas [true, false] mask or not (for password input)
+  # @return [String] user's input (without trailing newline)
+  def prompt(msg, mask = false)
+    print msg
+    if mask
+      input = STDIN.noecho(&:gets).chomp
+      puts
     else
-      ask(msg){|q| q.echo = masking_char}
+      input = STDIN.gets.chomp
     end
+    input
   end
 
   # get md5sum from given file path

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # coding: UTF-8
 
-# src2html
+# bin/src2html
 # 
 # colorizes given source codes to html files
 # 
@@ -56,6 +56,6 @@ CONV_DESC
   end
 end
 
-trap("SIGINT") { puts; exit 1 }
+trap('SIGINT') { puts; exit 1 }
 MeInside::Src2Html.start(ARGV)
 

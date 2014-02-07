@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby
+# coding: UTF-8
+
+# bin/mysql2csvs
+# 
+# Dump MySQL tables into csv file format
+# 
+# created on : 2012.06.11
+# last update: 2014.02.07
+# 
+# by meinside@gmail.com
+
+require 'thor'
+
+require 'my_util'
+require 'my_csv'
+require 'my_mysql'
+
+module MeInside
+  class Mysql2Csvs < Thor
+    include MyUtil
+
+    default_task :dump
+
+    desc "dump", "dump given mysql database to csv files"
+    long_desc <<DUMP_DESC
+$ mysql2csvs -u username -p passwd -d database
+
+or
+
+$ mysql2csvs
+DUMP_DESC
+    method_option :username, type: :string, aliases: '-u', desc: 'mysql username'
+    method_option :passwd, type: :string, aliases: '-p', desc: 'mysql password'
+    method_option :database, type: :string, aliases: '-d', desc: 'mysql database'
+    def dump(*args)
+      user = options['username'] || prompt('> mysql username: ')
+      passwd = options['passwd'] || prompt('> mysql password: ', true)
+      database = prompt("> mysql database name: ")
+
+      dumped_tables = dump_database(user, passwd, database, File.expand_path('./'))
+  
+      puts "* dump finished (total #{dumped_tables.count} table(s))"
+    end
+
+    private
+    def dump_database(db_user, db_passwd, db_name, out_dir)
+      dumped_tables = []
+      MyMysql.connect(user: db_user, password: db_passwd, database: db_name){|mysql|
+        puts "* dumping database: #{db_name}"
+        mysql.tables.each{|table|
+          csv_rows = []
+          mysql.execute_query("select * from #{table}").each{|row|
+            csv_rows << row
+          }
+
+          out_file = File.join(out_dir, "#{table}.csv")
+          puts "* dumping table: #{table} to: #{out_file} (#{csv_rows.count} row(s))"
+
+          dumped_tables << table if MyCsv.buildup_csvfile(csv_rows, out_file)
+        }
+      }
+      return dumped_tables
+    end
+  end
+end
+
+trap('SIGINT') { puts; exit 1 }
+MeInside::Mysql2Csvs.start(ARGV)
+

@@ -1,0 +1,56 @@
+#!/usr/bin/env ruby
+# coding: UTF-8
+
+# bin/sqlite2csvs
+# 
+# Dump given sqlite file to csv files (for each table)
+# 
+# created on : 2011.09.15
+# last update: 2014.02.07
+# 
+# by meinside@gmail.com
+
+require 'thor'
+
+require 'my_util'
+
+module MeInside
+  class Sqlite2Csvs < Thor
+    include MyUtil
+
+    def method_missing(method, *args)
+      dump method.to_s
+    end
+
+    default_task :dump
+
+    desc "dump", "dump given sqlite file to csv files"
+    long_desc <<DUMP_DESC
+$ sqlite2csvs FILEPATH
+
+or
+
+$ sqlite2csvs
+DUMP_DESC
+    method_option :filepath, type: :string, aliases: '-f', desc: 'sqlite filepath'
+    def dump(filepath = nil)
+      filepath ||=  options['filepath'] || prompt('> sqlite filepath: ')
+      filepath = File.expand_path(filepath)
+
+      if File.exists? filepath
+        `sqlite3 '#{filepath}' ".tables"`.split(/\s+/).each{|table|
+          `sqlite3 -csv -separator ',' '#{filepath}' "select * from #{table};" > #{table}.csv`
+
+          puts "* generated: #{table}.csv" if $?.exitstatus.zero?
+        }
+      else
+        puts "* file not exists: #{filepath}"
+        exit 1
+      end
+    end
+  end
+end
+
+trap('SIGINT') { puts; exit 1 }
+MeInside::Sqlite2Csvs.start(ARGV)
+

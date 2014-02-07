@@ -77,6 +77,9 @@ TEMPLATE_RSPEC
   TEMPLATE_SCRIPT = <<TEMPLATE_SCRIPT
 $: << File.join(__dir__, '..', SOMEWHERE)
 
+# for loading gems installed from git with bundler
+require 'bundler/setup'
+
 # TODO - do something
 
 TEMPLATE_SCRIPT

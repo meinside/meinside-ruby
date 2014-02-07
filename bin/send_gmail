@@ -78,8 +78,13 @@ SEND_DESC
         params[:filepath] = file if file && File.exists?(file)
       end
 
-      # send gmail
-      MyGmail.send(params)
+      response = prompt(">>> are you sure to send this email? (y/n): ")
+      if response =~ /^y/i
+        # send gmail
+        MyGmail.send(params)
+      else
+        puts "* canceled"
+      end
     end
 
     desc "genconfig", "generate a sample config file"

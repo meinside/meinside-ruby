@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
   s.add_dependency('coderay', '~> 1.0')
   s.add_dependency('dropbox-sdk', '~> 1.0')
   s.add_dependency('i2c', '~> 0.0')
-  s.add_dependency('json', '~> 1.0')
   s.add_dependency('mime', '~> 0.0')
   s.add_dependency('mimemagic', '~> 0.0')
   s.add_dependency('mysql', '~> 2.0')

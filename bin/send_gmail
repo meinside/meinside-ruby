@@ -73,8 +73,10 @@ SEND_DESC
       }
       params[:text_content] = text if text
       params[:html_content] = html if html
-      file = File.expand_path(file)
-      params[:filepath] = file if file && File.exists?(file)
+      if file
+        file = File.expand_path(file)
+        params[:filepath] = file if file && File.exists?(file)
+      end
 
       # send gmail
       MyGmail.send(params)

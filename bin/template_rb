@@ -6,7 +6,7 @@
 # generates ruby code templates
 # 
 # created on : 2007.10.31
-# last update: 2014.02.06
+# last update: 2014.02.21
 # 
 # by meinside@gmail.com
 
@@ -20,6 +20,9 @@ module MeInside
 
   TEMPLATE_TEST_UNIT = <<TEMPLATE_TEST_UNIT
 $: << File.join(__dir__, '..', SOMEWHERE)
+
+# for loading gems installed from git with bundler
+require 'bundler/setup'
 
 require 'test/unit'
 
@@ -44,6 +47,9 @@ TEMPLATE_TEST_UNIT
 
   TEMPLATE_RSPEC = <<TEMPLATE_RSPEC
 $: << File.join(__dir__, '..', SOMEWHERE)
+
+# for loading gems installed from git with bundler
+require 'bundler/setup'
 
 require 'some_class'
 

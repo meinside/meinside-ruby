@@ -6,7 +6,7 @@
 # (http://docs.amazonwebservices.com/AWSRubySDK/latest/frames.html)
 # 
 # created on : 2012.08.07
-# last update: 2013.08.23
+# last update: 2014.03.07
 # 
 # by meinside@gmail.com
 
@@ -15,16 +15,15 @@ require 'yaml'
 
 # Wrapper class for AWS services
 class MyAws
-
   # location constraints
   LOCATION_CONSTRAINTS = {
     us: nil,
-    uswest1: "us-west-1",
-    uswest2: "us-west-2",
-    eu: "eu-west-1",
-    tokyo: "ap-northeast-1",
-    singapore: "ap-southeast-1",
-    sa: "sa-east-1",
+    uswest1: 'us-west-1',
+    uswest2: 'us-west-2',
+    eu: 'eu-west-1',
+    tokyo: 'ap-northeast-1',
+    singapore: 'ap-southeast-1',
+    sa: 'sa-east-1',
   }
 
   # AWS-S3 wrapper class
@@ -32,8 +31,7 @@ class MyAws
   #  access_key_id: MY_ACCESS_KEY_ID
   #  secret_access_key: MY_SECRET_ACCESS_KEY
   class S3
-    # (see #Bucket)
-    @buckets = nil
+    @@s3 = nil
 
     # @param params [String, Hash] config file's path or parameter values as a hash
     # @note examples
@@ -47,19 +45,16 @@ class MyAws
       else
         AWS.config(params)
       end
-      return true
+      @@s3 = AWS::S3.new
+      true
     rescue
-      nil
+      puts "* exception while configuring AWS: #{$!}"
+      false
     end
 
     # @return [Array<Bucket>] buckets
     def self.buckets
-      if @buckets.nil?
-        @buckets = AWS::S3.new.buckets.map{|x| 
-          Bucket.new(name: x.name, location_constraint: x.location_constraint)
-        }
-      end
-      return @buckets
+      @@s3.buckets
     end
 
     # get bucket with given name
@@ -67,6 +62,8 @@ class MyAws
     # @return [Bucket, nil]
     def self.bucket(name)
       buckets.find{|x| x.name == name}
+    rescue AWS::S3::Errors::AccessDenied
+      @@s3.buckets[name]
     end
 
     # get location constraints' keys
@@ -99,16 +96,10 @@ class MyAws
     # @return [Bucket, nil] generated bucket
     def self.create_bucket(name, location = nil, options = {})
       options[:location_constraint] = LOCATION_CONSTRAINTS[location] if !location.nil? && !options.has_key?(:location_constraint)
-      bucket = AWS::S3.new.buckets.create(name, options)
-      if bucket.exists?
-        new_bucket = Bucket.new(name: bucket.name, location_constraint: bucket.location_constraint)
-        @buckets << new_bucket
-        return new_bucket
-      end
-      return nil
-    rescue
-      puts $!
-      return nil
+      @@s3.buckets.create(name, options)
+    rescue AWS::S3::Errors::AccessDenied
+      puts "* exception while creating a bucket: #{$!}"
+      nil
     end
 
     # empty bucket with given name
@@ -127,56 +118,10 @@ class MyAws
         else
           bucket(name).delete!
         end
-      rescue
-      else
-        @buckets.delete_if{|x| x.name == name}
+      rescue AWS::S3::Errors::AccessDenied
+        puts "* exception while deleting a bucket: #{$!}"
       end
-    end
-
-    # wrapper class for AWS-S3 bucket
-    class Bucket
-      def initialize(values)
-        @name = values[:name]
-        @location_constraint = values[:location_constraint]
-        @endpoint = MyAws::S3.region_endpoint(@location_constraint)
-
-        # https://forums.aws.amazon.com/thread.jspa?threadID=74724
-        @s3 = AWS::S3.new(s3_endpoint: endpoint)
-
-        @value = @s3.buckets[@name]
-      end
-
-      # return objects of this bucket
-      # @return [AWS::S3::ObjectCollection]
-      def objects
-        @value.objects
-      end
-
-      # return object keys
-      # @return [Array] keys of objects
-      def object_keys
-        @value.objects.map{|x| x.key}
-      end
-
-      # return object for given key
-      # @param key [String] object's key
-      # @return [AWS::S3::S3Object]
-      def object(key)
-        objects[key]
-      end
-
-      # if missing, call S3::Bucket's method instead
-      def method_missing(method, *args, &block)
-        if @value.methods.include? method
-          @value.send(method, *args, &block)
-        else
-          super
-        end
-      end
-
-      attr_reader :name, :endpoint
     end
   end
-
 end
 

@@ -6,7 +6,7 @@
 # test my_aws
 # 
 # created on : 2012.08.07
-# last update: 2013.02.28
+# last update: 2014.03.07
 # 
 # by meinside@gmail.com
 
@@ -53,10 +53,10 @@ class TestMyAws < Test::Unit::TestCase
     assert_not_nil(temp_bucket.objects[temp_file_name].write("test"))
     assert_equal(temp_bucket.objects[temp_file_name].read, "test")
 
-    assert_not_nil(temp_bucket.object(temp_file_name).write("test"), acl: :public_read)	# default acl: :private
-    assert_equal(temp_bucket.object(temp_file_name).read, "test")
+    assert_not_nil(temp_bucket.objects[temp_file_name].write("test", acl: :public_read))	# default acl: :private
+    assert_equal(temp_bucket.objects[temp_file_name].read, "test")
 
-    assert_equal(temp_bucket.object_keys, [temp_file_name])
+    assert_equal(temp_bucket.objects.map{|o| o.key}, [temp_file_name])
 
     assert(!temp_bucket.empty?)
     temp_bucket.clear!
@@ -66,10 +66,10 @@ class TestMyAws < Test::Unit::TestCase
     File.open(temp_file_path, "w"){|file|
       file << "file test"
     }
-    assert_not_nil(temp_bucket.object(temp_file_name).write(File.new(temp_file_path)))
-    assert_equal(temp_bucket.object(temp_file_name).read, "file test")
+    assert_not_nil(temp_bucket.objects[temp_file_name].write(File.new(temp_file_path)))
+    assert_equal(temp_bucket.objects[temp_file_name].read, "file test")
 
-    assert_not_nil(temp_bucket.object(temp_file_name).public_url)
+    assert_not_nil(temp_bucket.objects[temp_file_name].public_url)
 
     assert_not_nil(temp_bucket.objects[temp_file_name].url_for(:read, response_content_type: "application/json"))
     assert_not_nil(temp_bucket.objects[temp_file_name].url_for(:write, expires: 10 * 60))	# 10 minutes

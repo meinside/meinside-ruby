@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 # coding: UTF-8
 
-# bin/send_gmail
+# bin/gmail
 # 
-# send email through gmail
+# send an email through gmail
 # 
 # created on : 2012.06.19
-# last update: 2014.02.07
+# last update: 2014.03.07
 # 
 # by meinside@gmail.com
 
@@ -25,15 +25,15 @@ module MeInside
 
     desc "send", "send a mail through gmail with supplied parameters"
     long_desc <<SEND_DESC
-$ send_gmail -c ~/configs/gmail.config
+$ gmail -c ~/configs/gmail.config
 
 or
 
-$ send_gmail -u you@gmail.com -p password -r recipient@somewhere.com
+$ gmail -u you@gmail.com -p password -r recipient@somewhere.com
 
 or even
 
-$ send_gmail
+$ gmail
 SEND_DESC
     method_option :config, type: :string, aliases: '-c', desc: 'config file path'
     method_option :username, type: :string, aliases: '-u', desc: 'gmail username'
@@ -89,17 +89,17 @@ SEND_DESC
 
     desc "genconfig", "generate a sample config file"
     long_desc <<GENCONFIG_DESC
-$ send_gmail genconfig
+$ gmail genconfig
 
 or
 
-$ send_gmail genconfig ./send_gmail.config
+$ gmail genconfig ./gmail.config
 GENCONFIG_DESC
     def genconfig(filepath = nil)
       filepath ||= "gmail_sample.yml"
       File.open(filepath, 'w') {|file|
         file << <<CONFIG_SAMPLE
-# config file(.yml) sample for `send_gmail`
+# config file(.yml) sample for `gmail`
 
 ---
 sender:

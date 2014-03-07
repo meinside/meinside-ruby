@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 # coding: UTF-8
 
-# bin/template_rb
+# bin/template-ruby
 #
 # generates ruby code templates
 # 
 # created on : 2007.10.31
-# last update: 2014.02.21
+# last update: 2014.03.07
 # 
 # by meinside@gmail.com
 
@@ -101,15 +101,15 @@ TEMPLATE_SCRIPT
 
     desc "gen [FILENAME(.EXTENSION)]", "create a ruby file template with given filename"
     long_desc <<GEN_DESC
-$ template_rb some_script.rb
+$ template-ruby some_script.rb
 
 or
 
-$ template_rb some_script
+$ template-ruby some_script
 
 or even
 
-$ template_rb
+$ template-ruby
 GEN_DESC
     method_option :test, type: :boolean, aliases: '-t', desc: 'generates test unit template'
     method_option :rspec, type: :boolean, aliases: '-r', desc: 'generates rspec template'

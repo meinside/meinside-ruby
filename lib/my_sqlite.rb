@@ -5,7 +5,7 @@
 # sqlite wrapper
 # 
 # created on : 2009.12.21
-# last update: 2013.08.12
+# last update: 2014.06.17
 # 
 # by meinside@gmail.com
 
@@ -13,7 +13,7 @@ require 'sqlite3'
 
 # SQLite wrapper class
 class MySqlite
-
+  @@verbose = true
   @database = nil
 
   # @param filepath [String] file path
@@ -42,7 +42,7 @@ class MySqlite
   def execute_query(sql, *vars)
     return @database.execute(sql, vars)
   rescue
-    puts "MySqlite.execute_query(): #{$!}"
+    puts "MySqlite.execute_query(): #{$!}" if @@verbose
   end
 
   # with column headers
@@ -56,7 +56,7 @@ class MySqlite
   def select_with_column_names(sql, *vars)
     return @database.execute2(sql, vars)
   rescue
-    puts "MySqlite.select_with_column_names(): #{$!}"
+    puts "MySqlite.select_with_column_names(): #{$!}" if @@verbose
   end
 
   # get first row with given query and variables
@@ -66,7 +66,7 @@ class MySqlite
   def first_row(sql, *vars)
     return @database.get_first_row(sql, vars)
   rescue
-    puts "MySqlite.first_row(): #{$!}"
+    puts "MySqlite.first_row(): #{$!}" if @@verbose
   end
 
   # get first value with given query and variables
@@ -76,7 +76,7 @@ class MySqlite
   def first_value(sql, *vars)
     return @database.get_first_value(sql, vars)
   rescue
-    puts "MySqlite.first_value(): #{$!}"
+    puts "MySqlite.first_value(): #{$!}" if @@verbose
   end
 
   # get number of affected rows
@@ -94,6 +94,16 @@ class MySqlite
   # close currently opened file
   def close
     @database.close
+  end
+  
+  # @param verbose [true,false] set verbose or not
+  def self.verbose=(verbose)
+    @@verbose = verbose
+  end
+
+  # @return [true,false] verbose or not
+  def self.verbose
+    @@verbose
   end
 
 end

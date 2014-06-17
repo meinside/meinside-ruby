@@ -5,7 +5,7 @@
 # mysql wrapper
 # 
 # created on : 2012.08.02
-# last update: 2013.08.12
+# last update: 2014.06.17
 # 
 # by meinside@gmail.com
 
@@ -29,6 +29,7 @@ end
 
 # mysql wrapper class
 class MyMysql
+  @@verbose = true
 
   # default host
   LOCALHOST = "127.0.0.1"	# XXX - 'localhost'
@@ -89,7 +90,7 @@ class MyMysql
       @database.prepare(sql).execute
     end
   rescue
-    puts "MyMysql.execute_query(): #{$!}"
+    puts "MyMysql.execute_query(): #{$!}" if @@verbose
   end
 
   # get tables
@@ -146,6 +147,16 @@ class MyMysql
     @database.options(Mysql::OPT_CONNECT_TIMEOUT, timeout)
     @database.options(Mysql::OPT_READ_TIMEOUT, timeout)
     @database.options(Mysql::OPT_WRITE_TIMEOUT, timeout)
+  end
+  
+  # @param verbose [true,false] set verbose or not
+  def self.verbose=(verbose)
+    @@verbose = verbose
+  end
+
+  # @return [true,false] verbose or not
+  def self.verbose
+    @@verbose
   end
 
 end

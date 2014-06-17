@@ -5,7 +5,7 @@
 # OAuth class (referenced: http://oauth.net/core/1.0a)
 # 
 # created on : 2009.09.15
-# last update: 2013.08.12
+# last update: 2014.06.17
 # 
 # by meinside@gmail.com
 
@@ -14,6 +14,7 @@ require_relative 'my_str'
 
 # my OAuth helper class
 class MyOAuth
+  @@verbose = true
 
   # initializer
   #
@@ -221,7 +222,7 @@ class MyOAuth
     @oauth_token = request_oauth_token
     return @authorize_url + "?oauth_token=" + @oauth_token["oauth_token"]
   rescue
-    puts $!
+    puts $! if @@verbose
     return nil
   end
 
@@ -233,7 +234,7 @@ class MyOAuth
     @authorized = true
     return true
   rescue
-    puts $!
+    puts $! if @@verbose
     return false
   end
 
@@ -307,6 +308,16 @@ class MyOAuth
     return MyHttp.post_multipart(url, params, {
       "Authorization" => "OAuth #{generate_auth_header(post_auth_hash)}",
     })
+  end
+  
+  # @param verbose [true,false] set verbose or not
+  def self.verbose=(verbose)
+    @@verbose = verbose
+  end
+
+  # @return [true,false] verbose or not
+  def self.verbose
+    @@verbose
   end
 
   attr_reader :access_token, :authorized

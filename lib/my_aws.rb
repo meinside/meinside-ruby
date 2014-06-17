@@ -6,7 +6,7 @@
 # (http://docs.amazonwebservices.com/AWSRubySDK/latest/frames.html)
 # 
 # created on : 2012.08.07
-# last update: 2014.03.07
+# last update: 2016.06.17
 # 
 # by meinside@gmail.com
 
@@ -15,6 +15,8 @@ require 'yaml'
 
 # Wrapper class for AWS services
 class MyAws
+  @@verbose = true
+
   # location constraints
   LOCATION_CONSTRAINTS = {
     us: nil,
@@ -48,7 +50,7 @@ class MyAws
       @@s3 = AWS::S3.new
       true
     rescue
-      puts "* exception while configuring AWS: #{$!}"
+      puts "* exception while configuring AWS: #{$!}" if @@verbose
       false
     end
 
@@ -98,7 +100,7 @@ class MyAws
       options[:location_constraint] = LOCATION_CONSTRAINTS[location] if !location.nil? && !options.has_key?(:location_constraint)
       @@s3.buckets.create(name, options)
     rescue AWS::S3::Errors::AccessDenied
-      puts "* exception while creating a bucket: #{$!}"
+      puts "* exception while creating a bucket: #{$!}" if @@verbose
       nil
     end
 
@@ -119,8 +121,18 @@ class MyAws
           bucket(name).delete!
         end
       rescue AWS::S3::Errors::AccessDenied
-        puts "* exception while deleting a bucket: #{$!}"
+        puts "* exception while deleting a bucket: #{$!}" if @@verbose
       end
+    end
+
+    # @param verbose [true,false] set verbose or not
+    def self.verbose=(verbose)
+      @@verbose = verbose
+    end
+
+    # @return [true,false] verbose or not
+    def self.verbose
+      @@verbose
     end
   end
 end

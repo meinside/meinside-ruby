@@ -5,7 +5,7 @@
 # my csv library for parsing csv files easily
 # 
 # created on : 2010.08.13
-# last update: 2013.08.23
+# last update: 2014.06.17
 # 
 # by meinside@gmail.com
 
@@ -15,6 +15,7 @@ require 'spreadsheet'
 
 # CSV helper class
 class MyCsv
+  @@verbose = true
 
   # default encoding
   DEFAULT_ENCODING = 'UTF-8'
@@ -35,7 +36,7 @@ class MyCsv
       end
     }
   rescue
-    puts "MyCsv.parse_file(#{filepath}): #{$!}"
+    puts "MyCsv.parse_file(#{filepath}): #{$!}" if @@verbose
     return nil
   end
 
@@ -51,7 +52,7 @@ class MyCsv
       return CSV.parse(csv, encoding: @@encoding)
     end
   rescue
-    puts "MyCsv.parse(): #{$!}"
+    puts "MyCsv.parse(): #{$!}" if @@verbose
     return nil
   end
 
@@ -61,7 +62,7 @@ class MyCsv
   def self.parse_line(line)
     return line.nil? ? nil : line.encode(@@encoding, invalid: :replace, undef: :replace).parse_csv
   rescue
-    puts "MyCsv.parse_line(#{line}): #{$!}"
+    puts "MyCsv.parse_line(#{line}): #{$!}" if @@verbose
     return nil
   end
 
@@ -71,7 +72,7 @@ class MyCsv
   def self.buildup_line(arr)
     return CSV.generate(encoding: @@encoding){|csv| csv << arr}
   rescue
-    puts "MyCsv.buildup_line(#{arr.join(",")}): #{$!}"
+    puts "MyCsv.buildup_line(#{arr.join(",")}): #{$!}" if @@verbose
     return nil
   end
 
@@ -87,7 +88,7 @@ class MyCsv
     }
     return csv_string
   rescue
-    puts "MyCsv.buildup_csv(): #{$!}"
+    puts "MyCsv.buildup_csv(): #{$!}" if @@verbose
     return nil
   end
 
@@ -103,7 +104,7 @@ class MyCsv
     }
     return true
   rescue
-    puts "MyCsv.buildup_csvfile(#{filepath}): #{$!}"
+    puts "MyCsv.buildup_csvfile(#{filepath}): #{$!}" if @@verbose
     return false
   end
 
@@ -126,7 +127,7 @@ class MyCsv
     workbook.close
     return true
   rescue
-    puts "MyCsv.csv_to_xlsx(#{from_filepath}, #{to_filepath}): #{$!}"
+    puts "MyCsv.csv_to_xlsx(#{from_filepath}, #{to_filepath}): #{$!}" if @@verbose
     return false
   end
 
@@ -160,6 +161,16 @@ class MyCsv
   # @return [String] current encoding
   def self.encoding
     @@encoding
+  end
+    
+  # @param verbose [true,false] set verbose or not
+  def self.verbose=(verbose)
+    @@verbose = verbose
+  end
+
+  # @return [true,false] verbose or not
+  def self.verbose
+    @@verbose
   end
 
 end

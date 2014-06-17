@@ -5,7 +5,7 @@
 # my sftp class
 # 
 # created on : 2008.11.19
-# last update: 2013.08.23
+# last update: 2014.06.17
 # 
 # by meinside@gmail.com
 
@@ -15,11 +15,11 @@ require 'net/ssh'
 require_relative 'my_util'
 
 class MySftp
+  @@verbose = true
 
-  def initialize(addr, port = 22, verbose = false)
+  def initialize(addr, port = 22)
     @address = addr
     @port = port
-    @verbose = verbose
     @connection = nil
   end
 
@@ -37,39 +37,39 @@ class MySftp
       return @connection
     end
   rescue
-    puts "MySftp.connect(): #{$!}"
+    puts "MySftp.connect(): #{$!}" if @@verbose
   end
 
   def disconnect
     @connection.close_channel if @connection
     @connection = nil
   rescue
-    puts "MySftp.disconnect(): #{$!}"
+    puts "MySftp.disconnect(): #{$!}" if @@verbose
   end
 
   def upload(from, to)
     return nil unless @connection
-    puts "MySftp.upload(#{from} -> #{to})" if @verbose
+    puts "MySftp.upload(#{from} -> #{to})" if @@verbose
     # TODO - create directory recursively before upload
     @connection.upload!(from, to)
   rescue
-    puts "MySftp.upload(#{from} -> #{to}): #{$!}"
+    puts "MySftp.upload(#{from} -> #{to}): #{$!}" if @@verbose
   end
 
   def download(from, to)
     return nil unless @connection
-    puts "MySftp.download(#{from} -> #{to})" if @verbose
+    puts "MySftp.download(#{from} -> #{to})" if @@verbose
     @connection.download!(from, to)
   rescue
-    puts "MySftp.download(#{from} -> #{to}): #{$!}"
+    puts "MySftp.download(#{from} -> #{to}): #{$!}" if @@verbose
   end
 
   def mkdir(path, permission = 0700)
     return nil unless @connection
-    puts "MySftp.mkdir(#{path}, #{permission})" if @verbose
+    puts "MySftp.mkdir(#{path}, #{permission})" if @@verbose
     @connection.mkdir!(path, permissions: permission)
   rescue
-    puts "MySftp.mkdir(#{path}, #{permission}): #{$!}"
+    puts "MySftp.mkdir(#{path}, #{permission}): #{$!}" if @@verbose
   end
 
   def mkdir_r(remote_path, permission = 0700)
@@ -78,27 +78,27 @@ class MySftp
     remote_path.split(path).each{|dir|
       path = File.join(path, dir)
       # TODO - if already exists => do nothing
-      puts "MySftp.mkdir_r(#{path}, #{permission})" if @verbose
+      puts "MySftp.mkdir_r(#{path}, #{permission})" if @@verbose
       @connection.mkdir!(path, permissions: permission)
     }
   rescue
-    puts "MySftp.mkdir_r(#{path}, #{permission}): #{$!}"
+    puts "MySftp.mkdir_r(#{path}, #{permission}): #{$!}" if @@verbose
   end
 
   def rmdir(path)
     return nil unless @connection
-    puts "MySftp.rmdir(#{path})" if @verbose
+    puts "MySftp.rmdir(#{path})" if @@verbose
     @connection.rmdir! path
   rescue
-    puts "MySftp.rmdir(#{path}): #{$!}"
+    puts "MySftp.rmdir(#{path}): #{$!}" if @@verbose
   end
 
   def rm(path)
     return nil unless @connection
-    puts "MySftp.rm(#{path})" if @verbose
+    puts "MySftp.rm(#{path})" if @@verbose
     @connection.remove! path
   rescue
-    puts "MySftp.rm(#{path}): #{$!}"
+    puts "MySftp.rm(#{path}): #{$!}" if @@verbose
   end
 
   # recurse given remote dir and call lambdas on files/dirs according to their types
@@ -127,32 +127,42 @@ class MySftp
     end
     @connection.close(handle)
   rescue
-    puts "MySftp.recurse() - #{$!}"
+    puts "MySftp.recurse() - #{$!}" if @@verbose
   end
 
   def download_r(from, to)
     lambda_dir = lambda{|path|
       local_path = File.join(to, path.gsub(from, ""))
-      puts "dir: #{path} => #{local_path}" if @verbose
+      puts "dir: #{path} => #{local_path}" if @@verbose
       File.makedirs(local_path)
     }
     lambda_file = lambda{|path|
       local_path = File.join(to, path.gsub(from, ""))
-      puts "file: #{path} => #{local_path}" if @verbose
+      puts "file: #{path} => #{local_path}" if @@verbose
       @connection.download(path, local_path)
     }
     recurse(from, to, lambda_dir, lambda_file)
+  end
+  
+  # @param verbose [true,false] set verbose or not
+  def self.verbose=(verbose)
+    @@verbose = verbose
+  end
+
+  # @return [true,false] verbose or not
+  def self.verbose
+    @@verbose
   end
 
 # def upload_r(from, to)
 #   lambda_dir = lambda{|path|
 #     local_path = File.join(to, path.gsub(from, ""))
-#     puts "dir: #{local_path} => #{path}" if @verbose
+#     puts "dir: #{local_path} => #{path}" if @@verbose
 #     @connection.mkdir_r(path)
 #   }
 #   lambda_file = lambda{|path|
 #     local_path = File.join(to, path.gsub(from, ""))
-#     puts "file: #{local_path} => #{path}" if @verbose
+#     puts "file: #{local_path} => #{path}" if @@verbose
 #     @connection.upload(local_path, path)
 #   }
 #   recurse(to, from, lambda_dir, lambda_file)

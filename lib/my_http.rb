@@ -5,7 +5,7 @@
 # http related functions
 # 
 # created on : 2008.11.05.
-# last update: 2014.02.06.
+# last update: 2014.06.17.
 # 
 # by meinside@gmail.com
 
@@ -16,7 +16,7 @@ require_relative 'my_str'
 
 # my http library
 class MyHttp
-
+  @@verbose = true
   @@timeout = nil
 
   # get page content from given url
@@ -57,7 +57,7 @@ class MyHttp
       return http.request(req)
     }
   rescue
-    puts "MyHttp.get(#{url}): #{$!}"
+    puts "MyHttp.get(#{url}): #{$!}" if @@verbose
     return nil
   end
 
@@ -82,7 +82,7 @@ class MyHttp
       return http.request(req)
     }
   rescue
-    puts "MyHttp.post(#{url}): #{$!}"
+    puts "MyHttp.post(#{url}): #{$!}" if @@verbose
     return nil
   end
 
@@ -123,7 +123,7 @@ class MyHttp
       return http.request(req)
     }
   rescue
-    puts "MyHttp.post_multipart(#{url}): #{$!}"
+    puts "MyHttp.post_multipart(#{url}): #{$!}" if @@verbose
     return nil
   end
 
@@ -149,7 +149,7 @@ class MyHttp
       return http.request(req)
     }
   rescue
-    puts "MyHttp.post_with_auth(#{url}, #{id}, #{passwd}): #{$!}"
+    puts "MyHttp.post_with_auth(#{url}, #{id}, #{passwd}): #{$!}" if @@verbose
     return nil
   end
 
@@ -170,7 +170,7 @@ class MyHttp
   def self.get_content_type(filepath)
     MimeMagic.by_path(filepath)
   rescue
-    puts "MyHttp.get_content_type(#{filepath}): #{$!}"
+    puts "MyHttp.get_content_type(#{filepath}): #{$!}" if @@verbose
     return nil
   end
 
@@ -227,12 +227,23 @@ class MyHttp
       end
     }
   rescue
-    puts "MyHttp.get_content_length(#{url}): #{$!}"
+    puts "MyHttp.get_content_length(#{url}): #{$!}" if @@verbose
     return nil
   end
 
-  def self.set_timeout(timeout)
+  # @param timeout [Number] timeout value
+  def self.timeout=(timeout)
     @@timeout = timeout
+  end
+  
+  # @param verbose [true,false] set verbose or not
+  def self.verbose=(verbose)
+    @@verbose = verbose
+  end
+
+  # @return [true,false] verbose or not
+  def self.verbose
+    @@verbose
   end
 
 end

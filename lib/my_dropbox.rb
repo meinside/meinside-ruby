@@ -6,7 +6,7 @@
 # (https://www.dropbox.com/developers/start/setup#ruby)
 # 
 # created on : 2013.02.06
-# last update: 2013.08.23
+# last update: 2014.06.17
 # 
 # by meinside@gmail.com
 
@@ -21,6 +21,7 @@ require 'yaml'
 #  access_token: SESSION_TOKEN_RETRIEVED_FROM_AUTHORIZATION
 #  access_secret: SESSION_SECRET_RETRIEVED_FROM_AUTHORIZATION
 class MyDropbox
+  @@verbose = true
 
   private
 
@@ -73,7 +74,7 @@ YML_FILE
     end
     nil
   rescue
-    puts $!
+    puts $! if @@verbose
     nil
   end
 
@@ -86,7 +87,7 @@ YML_FILE
   def initialize(params)
     @client = MyDropbox.authorize(params)
   rescue
-    puts $!
+    puts $! if @@verbose
     @client = nil
   end
 
@@ -98,7 +99,7 @@ YML_FILE
     local_file.close if close_file
     result
   rescue
-    puts $!
+    puts $! if @@verbose
     nil
   end
 
@@ -109,7 +110,7 @@ YML_FILE
     File.open(local_filepath, 'wb'){ |f| f.write contents }
     metadata
   rescue
-    puts $!
+    puts $! if @@verbose
     nil
   end
 
@@ -118,7 +119,7 @@ YML_FILE
   def ls(path, revision = nil, include_deleted = false)
     @client.metadata(path, 25000, true, nil, revision, include_deleted)
   rescue
-    puts $!
+    puts $! if @@verbose
     nil
   end
 
@@ -127,7 +128,7 @@ YML_FILE
   def mkdir(path)
     @client.file_create_folder(path)
   rescue
-    puts $!
+    puts $! if @@verbose
     nil
   end
 
@@ -136,7 +137,7 @@ YML_FILE
   def cp(from_location, to_location)
     @client.file_copy(from_location, to_location)
   rescue
-    puts $!
+    puts $! if @@verbose
     nil
   end
 
@@ -145,7 +146,7 @@ YML_FILE
   def mv(from_location, to_location)
     @client.file_move(from_location, to_location)
   rescue
-    puts $!
+    puts $! if @@verbose
     nil
   end
 
@@ -154,7 +155,7 @@ YML_FILE
   def rm(location)
     @client.file_delete(location)
   rescue
-    puts $!
+    puts $! if @@verbose
     nil
   end
 
@@ -163,7 +164,7 @@ YML_FILE
   def revisions(location, limit = 1000)
     @client.revisions(location, limit)
   rescue
-    puts $!
+    puts $! if @@verbose
     nil
   end
 
@@ -172,7 +173,7 @@ YML_FILE
   def restore(location, revision)
     @client.restore(location, revision)
   rescue
-    puts $!
+    puts $! if @@verbose
     nil
   end
 
@@ -181,8 +182,18 @@ YML_FILE
   def share(location)
     @client.shares(location)
   rescue
-    puts $!
+    puts $! if @@verbose
     nil
+  end
+  
+  # @param verbose [true,false] set verbose or not
+  def self.verbose=(verbose)
+    @@verbose = verbose
+  end
+
+  # @return [true,false] verbose or not
+  def self.verbose
+    @@verbose
   end
 
 end

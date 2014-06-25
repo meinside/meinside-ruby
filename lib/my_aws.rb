@@ -3,10 +3,10 @@
 # lib/my_aws.rb
 # 
 # AWS wrapper class
-# (http://docs.amazonwebservices.com/AWSRubySDK/latest/frames.html)
+# (http://docs.aws.amazon.com/AWSRubySDK/latest/frames.html)
 # 
 # created on : 2012.08.07
-# last update: 2016.06.17
+# last update: 2014.06.25
 # 
 # by meinside@gmail.com
 
@@ -18,14 +18,16 @@ class MyAws
   @@verbose = true
 
   # location constraints
-  LOCATION_CONSTRAINTS = {
-    us: nil,
-    uswest1: 'us-west-1',
-    uswest2: 'us-west-2',
-    eu: 'eu-west-1',
-    tokyo: 'ap-northeast-1',
-    singapore: 'ap-southeast-1',
-    sa: 'sa-east-1',
+  REGIONS = {
+    us:         nil,
+    useast1:    'us-east-1',      # Northern Virginia
+    uswest1:    'us-west-1',      # Northern California
+    uswest2:    'us-west-2',      # Oregon
+    sa:         'sa-east-1',      # Sao Paulo
+    eu:         'eu-west-1',      # Ireland
+    tokyo:      'ap-northeast-1', # Tokyo
+    singapore:  'ap-southeast-1', # Singapore
+    sydney:     'ap-southeast-2', # Sydney
   }
 
   # AWS-S3 wrapper class
@@ -39,6 +41,7 @@ class MyAws
     # @note examples
     #  - MyAws::S3.config(config_file: "~/.conf/s3.yml")
     #  - MyAws::S3.config(access_key_id: "MY_ACCESS_KEY_ID", secret_access_key: "MY_SECRET_ACCESS_KEY")
+    #  - MyAws::S3.config(access_key_id: "MY_ACCESS_KEY_ID", secret_access_key: "MY_SECRET_ACCESS_KEY", region: 'ap-northeast-1')
     # @return [true, nil]
     def self.config(params)
       if params[:config_file]
@@ -71,7 +74,7 @@ class MyAws
     # get location constraints' keys
     # @return [Array<String>]
     def self.regions
-      LOCATION_CONSTRAINTS.keys
+      REGIONS.keys
     end
 
     # get appropriate region endpoint for given location
@@ -80,7 +83,7 @@ class MyAws
     def self.region_endpoint(location)
       return location.nil? ? 
         "s3.amazonaws.com" : 
-        "s3-#{(location.is_a?(Symbol) ? LOCATION_CONSTRAINTS[location] : location)}.amazonaws.com"
+        "s3-#{(location.is_a?(Symbol) ? REGIONS[location] : location)}.amazonaws.com"
     end
 
     # create a new bucket with given name and options
@@ -97,7 +100,7 @@ class MyAws
     #  }
     # @return [Bucket, nil] generated bucket
     def self.create_bucket(name, location = nil, options = {})
-      options[:location_constraint] = LOCATION_CONSTRAINTS[location] if !location.nil? && !options.has_key?(:location_constraint)
+      options[:location_constraint] = REGIONS[location] if !location.nil? && !options.has_key?(:location_constraint)
       @@s3.buckets.create(name, options)
     rescue AWS::S3::Errors::AccessDenied
       puts "* exception while creating a bucket: #{$!}" if @@verbose

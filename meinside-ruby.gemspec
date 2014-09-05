@@ -2,8 +2,8 @@
 
 Gem::Specification.new do |s|
   # version/date
-  s.version     = '0.0.3'
-  s.date        = '2014-06-25'
+  s.version     = '0.0.4'
+  s.date        = '2014-09-05'
 
   # project info
   s.name        = 'meinside-ruby'
@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency('net-ssh', '~> 2.0')
   s.add_dependency('ruby-gmail', '~> 0.0')
   s.add_dependency('ruby-hmac', '~> 0.0')
-  s.add_dependency('spreadsheet', '~> 0.0')
+  s.add_dependency('spreadsheet', '~> 1.0')
   s.add_dependency('sqlite3', '~> 1.0')
   s.add_dependency('thor', '~> 0.0')
   s.add_dependency('wiringpi', '~> 1.0')

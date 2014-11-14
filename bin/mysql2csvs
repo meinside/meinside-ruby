@@ -6,11 +6,13 @@
 # Dump MySQL tables into csv file format
 # 
 # created on : 2012.06.11
-# last update: 2014.02.07
+# last update: 2014.11.14
 # 
 # by meinside@gmail.com
 
 require 'thor'
+
+require 'bundler/setup'
 
 require 'my_util'
 require 'my_csv'

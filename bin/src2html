@@ -6,13 +6,14 @@
 # colorizes given source codes to html files
 # 
 # created on : 2009.10.09
-# last update: 2014.02.06
+# last update: 2014.11.14
 # 
 # by meinside@gmail.com
 
 require "thor"
-
 require "coderay"
+
+require 'bundler/setup'
 
 module MeInside
   class Src2Html < Thor

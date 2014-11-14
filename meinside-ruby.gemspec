@@ -1,9 +1,9 @@
-# last update: 2014.06.25.
+# last update: 2014.11.14.
 
 Gem::Specification.new do |s|
   # version/date
-  s.version     = '0.0.4'
-  s.date        = '2014-09-05'
+  s.version     = '0.0.5'
+  s.date        = '2014-11-14'
 
   # project info
   s.name        = 'meinside-ruby'

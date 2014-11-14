@@ -6,11 +6,13 @@
 # generates ruby code templates
 # 
 # created on : 2007.10.31
-# last update: 2014.03.07
+# last update: 2014.11.14
 # 
 # by meinside@gmail.com
 
 require 'thor'
+
+require 'bundler/setup'
 
 require 'my_util'
 

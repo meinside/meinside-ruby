@@ -6,11 +6,13 @@
 # Dump given sqlite file to csv files (for each table)
 # 
 # created on : 2011.09.15
-# last update: 2014.02.07
+# last update: 2014.11.14
 # 
 # by meinside@gmail.com
 
 require 'thor'
+
+require 'bundler/setup'
 
 require 'my_util'
 

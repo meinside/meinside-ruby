@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.description = 'my ruby scripts and libraries for daily use'
   s.files       = Dir['lib/*.rb'] + Dir['lib/test/*.rb'] + Dir['bin/*']
   s.executables = Dir['bin/*'].map{|x| File.basename(x)}
+  s.require_paths = ['lib']
   s.license     = 'MIT'
 
   # dependencies

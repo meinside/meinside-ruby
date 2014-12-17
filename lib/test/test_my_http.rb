@@ -6,11 +6,13 @@
 # test my_http
 # 
 # created on : 2008.11.05
-# last update: 2013.02.28
+# last update: 2014.12.17
 # 
 # by meinside@gmail.com
 
 require 'test/unit'
+
+require 'json'
 
 require_relative '../my_http'
 
@@ -54,6 +56,14 @@ class TestMyHttp < Test::Unit::TestCase
     result = MyHttp.post(
       SOME_URL_THAT_MANAGES_POST, 
       {"fname" => "Test Value 1", "lname" => "Test Value 2",},
+      {"Some-Header-Value" => "Nothing",})
+    assert_not_nil(result)
+    
+    # url with data and headers as hash
+    result = MyHttp.post_data(
+      SOME_URL_THAT_MANAGES_POST, 
+      {testing: 'something'}.to_json,
+      'application/json',
       {"Some-Header-Value" => "Nothing",})
     assert_not_nil(result)
 

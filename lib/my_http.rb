@@ -5,7 +5,7 @@
 # http related functions
 # 
 # created on : 2008.11.05.
-# last update: 2014.06.17.
+# last update: 2014.12.17.
 # 
 # by meinside@gmail.com
 
@@ -21,7 +21,7 @@ class MyHttp
 
   # get page content from given url
   # @param url [String] url
-  # @param parameters [Hash] parameters GET parameters
+  # @param parameters [Hash] GET parameters
   # @param additional_headers [Hash] additional headers
   # @return [Net::HTTPResponse, nil]
   #
@@ -63,7 +63,7 @@ class MyHttp
 
   # get page content from given url with POST method
   # @param url [String] url
-  # @param parameters [Hash] parameters POST parameters
+  # @param parameters [Hash] POST parameters
   # @param additional_headers [Hash] additional headers
   # @return [Net::HTTPResponse, nil]
   def self.post(url, parameters = nil, additional_headers = nil)
@@ -83,6 +83,31 @@ class MyHttp
     }
   rescue
     puts "MyHttp.post(#{url}): #{$!}" if @@verbose
+    return nil
+  end
+  
+  # get page content from given url with POST method
+  # @param url [String] url
+  # @param data [Object] POST data
+  # @param content_type [String] content type
+  # @param additional_headers [Hash] additional headers
+  # @return [Net::HTTPResponse, nil]
+  def self.post_data(url, data, content_type, additional_headers = nil)
+    uri = URI.parse(url)
+    Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https'){|http|
+      req = Net::HTTP::Post.new(uri.request_uri)
+      req.body = data
+      req['Content-Type'] = content_type
+      unless additional_headers.nil?
+        additional_headers.each_pair{|key, value|
+          req.add_field(key.to_s, value.to_s)
+        }
+      end
+      http.read_timeout = @@timeout unless @@timeout
+      return http.request(req)
+    }
+  rescue
+    puts "MyHttp.post_data(#{url}): #{$!}" if @@verbose
     return nil
   end
 

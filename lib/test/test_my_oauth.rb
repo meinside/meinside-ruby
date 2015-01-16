@@ -6,7 +6,7 @@
 # test my_oauth
 # 
 # created on : 2012.07.09
-# last update: 2013.02.28
+# last update: 2015.01.16
 # 
 # by meinside@gmail.com
 
@@ -25,7 +25,7 @@ class TestMyOAuth < Test::Unit::TestCase
     @access_token_url = prompt("> access token url(ex: https://api.twitter.com/oauth/access_token): ")
 
     @consumer_key = prompt("> consumer key(ex: AaBbCcDdEeXxYyZz): ")
-    @consumer_secret = prompt("> consumer secret(ex: Aa0Bb1Cc2Dd3Ee4Ff5Gg6Hh7Ii8): ", "*")
+    @consumer_secret = prompt("> consumer secret(ex: Aa0Bb1Cc2Dd3Ee4Ff5Gg6Hh7Ii8): ", true)
 
     @oauth = MyOAuth.new(@consumer_key, @consumer_secret, @request_token_url, @access_token_url, @authorize_url)
   end

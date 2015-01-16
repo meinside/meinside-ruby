@@ -6,7 +6,7 @@
 # test my_mysql
 # 
 # created on : 2012.08.02
-# last update: 2013.02.28
+# last update: 2015.01.16
 # 
 # by meinside@gmail.com
 
@@ -25,7 +25,7 @@ class TestMyMysql < Test::Unit::TestCase
     @test_port = prompt("> mysql port(default: 3306): ")
     @test_port = nil if @test_port.strip.empty?
     @test_id = prompt("> mysql user id: ")
-    @test_passwd = prompt("> mysql user password: ", "*")
+    @test_passwd = prompt("> mysql user password: ", true)
     @test_database = prompt("> mysql database: ")
   end
 

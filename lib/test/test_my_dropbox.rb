@@ -6,7 +6,7 @@
 # test my_dropbox
 # 
 # created on : 2013.02.07
-# last update: 2013.02.28
+# last update: 2015.01.16
 # 
 # by meinside@gmail.com
 
@@ -33,9 +33,9 @@ class TestMyDropbox < Test::Unit::TestCase
       assert(@dropbox = MyDropbox.new(config_file: config))
     else
       app_key = prompt("> dropbox app key: ")
-      app_secret = prompt("> dropbox app secret: ", "*")
+      app_secret = prompt("> dropbox app secret: ", true)
       access_token = prompt("> dropbox access token: ")
-      access_secret = prompt("> dropbox access secret: ", "*")
+      access_secret = prompt("> dropbox access secret: ", true)
       access_type = prompt("> dropbox access type (dropbox / app_folder): ")
 
       assert(@dropbox = MyDropbox.new(app_key: app_key, app_secret: app_secret, access_token: access_token, access_secret: access_secret, access_type: (access_type =~ /dropbox/i ? :dropbox : :app_folder)))

@@ -6,7 +6,7 @@
 # test my_aws
 # 
 # created on : 2012.08.07
-# last update: 2014.03.07
+# last update: 2015.01.16
 # 
 # by meinside@gmail.com
 
@@ -32,8 +32,8 @@ class TestMyAws < Test::Unit::TestCase
     if config.length > 0 && File.exists?(File.expand_path(config))
       assert(MyAws::S3.config(config_file: config))
     else
-      access_key_id = prompt("> s3 access key id: ", "*")
-      secret_access_key = prompt("> s3 secret access key: ", "*")
+      access_key_id = prompt("> s3 access key id: ", true)
+      secret_access_key = prompt("> s3 secret access key: ", true)
       assert(MyAws::S3.config(access_key_id: access_key_id, secret_access_key: secret_access_key))
     end
 

@@ -6,7 +6,7 @@
 # test my_sftp
 # 
 # created on : 2008.11.19
-# last update: 2013.02.28
+# last update: 2015.01.16
 # 
 # by meinside@gmail.com
 
@@ -52,7 +52,7 @@ class TestMySftp < Test::Unit::TestCase
     @test_server = prompt("> remote server addr(ex: test.server.com): ")
     @test_port = prompt("> remote server port(ex: 22): ")
     @test_id = prompt("> remote server user id: ")
-    @test_passwd = prompt("> remote server user password: ", "*")
+    @test_passwd = prompt("> remote server user password: ", true)
     @remote_test_dir = prompt("> remote test dir(ex: /home/test/test_dir/): ")
     @remote_test_file = File.join(@remote_test_dir, "test.txt")
   end

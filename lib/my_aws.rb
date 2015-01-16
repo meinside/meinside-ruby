@@ -6,7 +6,7 @@
 # (http://docs.aws.amazon.com/AWSRubySDK/latest/frames.html)
 # 
 # created on : 2012.08.07
-# last update: 2014.06.25
+# last update: 2015.01.16
 # 
 # by meinside@gmail.com
 
@@ -24,7 +24,8 @@ class MyAws
     uswest1:    'us-west-1',      # Northern California
     uswest2:    'us-west-2',      # Oregon
     sa:         'sa-east-1',      # Sao Paulo
-    eu:         'eu-west-1',      # Ireland
+    euwest:     'eu-west-1',      # Ireland
+    eucentral:  'eu-central-1',   # Frankfurt
     tokyo:      'ap-northeast-1', # Tokyo
     singapore:  'ap-southeast-1', # Singapore
     sydney:     'ap-southeast-2', # Sydney

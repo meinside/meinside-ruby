@@ -7,7 +7,7 @@ My ruby scripts/libraries for daily use.
 
 ## LICENSE ##
 
-Copyright (c) 2014, Sungjin Han <meinside@gmail.com>
+Copyright (c) 2015, Sungjin Han <meinside@gmail.com>
 All rights reserved.
   
  Redistribution and use in source and binary forms, with or without

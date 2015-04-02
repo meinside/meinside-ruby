@@ -5,7 +5,7 @@
 # http related functions
 # 
 # created on : 2008.11.05.
-# last update: 2014.12.17.
+# last update: 2015.04.02.
 # 
 # by meinside@gmail.com
 
@@ -71,7 +71,7 @@ class MyHttp
     Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https'){|http|
       req = Net::HTTP::Post.new(uri.request_uri)
       unless parameters.nil?
-        req.set_form_data(parameters, ';')
+        req.set_form_data(parameters, '&')  # XXX - which is correct? '&' or ';'?
       end
       unless additional_headers.nil?
         additional_headers.each_pair{|key, value|
